@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=c11
+CFLAGS = -std=c11 -pthread
 
 SRC_DIR = source
 SRCS = $(wildcard $(SRC_DIR)/*.c)

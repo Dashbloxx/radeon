@@ -13,6 +13,7 @@
 #include <unistd.h>
 
 #include "logging.h"
+#include "types.h"
 
 /* Default Minecraft server port... */
 #define PORT 25565
@@ -28,13 +29,13 @@ int main() {
     char buffer[BUFFER_SIZE] = {0};
     char *response = "Hello from server!";
 
-    // Create socket file descriptor
+    /* Create socket file descriptor */
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         sendf(LOG_ERROR, "Setting up sockets failed...\n");
         return -1;
     }
 
-    // Set socket options
+    /* Set socket options */
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
         sendf(LOG_ERROR, "The function `setsockopt` failed...\n");
         return -1;
@@ -50,27 +51,33 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    // Listen for incoming connections
+    /* Listen for incoming connections */
     if (listen(server_fd, 3) < 0) {
         sendf(LOG_ERROR, "Listening to port %s failed...\n", PORT);
         exit(EXIT_FAILURE);
     }
 
-    // Accept incoming connection
+    /* Accept incoming connection */
     if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
         sendf(LOG_ERROR, "Accepting incoming connection failed...\n");
         exit(EXIT_FAILURE);
     }
 
-    // Read data from client
+    /* Wait for a client to connect, and read the data that it sends. After it recieves the data, print it out to `stdout`... */
     valread = read(new_socket, buffer, BUFFER_SIZE);
-    sendf(LOG_INFO, "Received message: %s\n", buffer);
 
-    // Send response to client
-    send(new_socket, response, strlen(response), 0);
-    sendf(LOG_INFO, "Response sent\n");
+    sendf(LOG_DEBUG, "Received message: ");
+    for (int i = 0; i < valread; i++) {
+        printf("%02X ", (unsigned char) buffer[i]);
+    }
+    printf("\n");
 
-    // Close socket
+    /* Let's now parse the information given to us! */
+
+    int packet_length;
+    packet_length = buffer[0];
+
+    /* Close socket... */
     close(new_socket);
     close(server_fd);
 
