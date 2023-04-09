@@ -7,3 +7,5 @@ typedef struct {
 } coordinate_t;
 
 typedef unsigned long encoded_coordinate_t;
+
+typedef unsigned char uuid_t[16];
