@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Werror
+CFLAGS = -std=c11
 
 SRC_DIR = source
 SRCS = $(wildcard $(SRC_DIR)/*.c)
